@@ -11,13 +11,22 @@
  - I now have the tests running on "watch" while I make changes.  Each commit is going to cover a separate thought
 
 ### Future Improvements
-  - This app is supposed to be geared towards people who need advocacy, we'd better be sure to use best practices around accessibility
+  - This app is supposed to be geared towards people who need advocacy, we'd better be sure to use best practices around accessibility (ie. ARIA)
   - The API architecture could be improved:
     - Full CRUD operations, Controllers, Resources/Responses, Services, Repositories, DTO Layer, Interfaces, etc
     - API documentation (swagger/openapi)
+    - Pagination
   - Frontend could use additional features:
     - Sort by columns
     - Filter specific columns
     - Allow users to mark providers as favorite
       - Along these lines, it'd be good to add a compare feature
+    - Loading states
+    - On-page SEO strategies
+    - Further optimizations
+      - "Memoizing" for filtering a lot of records
 
+### Weak Understandings
+  - I don't understand why the API call is being made twice on load
+    - AI says this is normal for development, but will not happen in prod?
+  - I admit, I would not have known about "Memo-izing" without an AI code review
