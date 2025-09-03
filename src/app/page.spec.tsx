@@ -50,7 +50,7 @@ describe('Home Page', () => {
 
   it('fetches and displays advocates', async () => {
     render(<Home />);
-    
+
     await waitFor(() => {
       expect(screen.getByText('Doe')).toBeInTheDocument();
       expect(screen.getByText('Smith')).toBeInTheDocument();
@@ -59,7 +59,7 @@ describe('Home Page', () => {
 
   it('filters advocates by search term', async () => {
     render(<Home />);
-    
+
     await waitFor(() => {
       expect(screen.getByText('Doe')).toBeInTheDocument();
     });
@@ -67,24 +67,57 @@ describe('Home Page', () => {
     const searchInput = screen.getByRole('textbox');
     fireEvent.change(searchInput, { target: { value: 'John' } });
 
+    // Wait for debounce delay
+    await waitFor(() => {
+      expect(screen.queryByText('Smith')).not.toBeInTheDocument();
+    }, { timeout: 500 });
+
     expect(screen.getByText('Doe')).toBeInTheDocument();
-    expect(screen.queryByText('Smith')).not.toBeInTheDocument();
   });
 
   it('resets search when reset button is clicked', async () => {
     render(<Home />);
-    
+
     await waitFor(() => {
       expect(screen.getByText('Doe')).toBeInTheDocument();
     });
 
     const searchInput = screen.getByRole('textbox');
     fireEvent.change(searchInput, { target: { value: 'John' } });
-    
+
     const resetButton = screen.getByText('Reset Search');
     fireEvent.click(resetButton);
 
     expect(screen.getByText('Doe')).toBeInTheDocument();
     expect(screen.getByText('Smith')).toBeInTheDocument();
+  });
+
+  it('should debounce search input to avoid excessive filtering', async () => {
+    jest.useFakeTimers();
+    const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+
+    render(<Home />);
+
+    await waitFor(() => {
+      expect(screen.getByText('Doe')).toBeInTheDocument();
+    });
+
+    const searchInput = screen.getByRole('textbox');
+
+    // Type multiple characters quickly
+    fireEvent.change(searchInput, { target: { value: 'J' } });
+    fireEvent.change(searchInput, { target: { value: 'Jo' } });
+    fireEvent.change(searchInput, { target: { value: 'Joh' } });
+    fireEvent.change(searchInput, { target: { value: 'John' } });
+
+    // Should only filter once after debounce delay, not 4 times
+    const filteringCalls = consoleSpy.mock.calls.filter(call =>
+      call[0] === 'filtering advocates...'
+    );
+
+    expect(filteringCalls.length).toBeLessThanOrEqual(1);
+
+    consoleSpy.mockRestore();
+    jest.useRealTimers();
   });
 });

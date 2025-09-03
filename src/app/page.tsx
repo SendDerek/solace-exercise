@@ -13,10 +13,27 @@ interface Advocate {
   phoneNumber: string;
 }
 
+const useDebounce = (value: string, delay: number) => {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [value, delay]);
+
+  return debouncedValue;
+};
+
 export default function Home() {
   const [advocates, setAdvocates] = useState<Advocate[]>([]);
   const [filteredAdvocates, setFilteredAdvocates] = useState<Advocate[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
   useEffect(() => {
     let isCancelled = false;
@@ -43,24 +60,28 @@ export default function Home() {
     };
   }, []);
 
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const searchTerm = e.target.value;
-
-    setSearchTerm(searchTerm);
+  useEffect(() => {
+    if (!debouncedSearchTerm) {
+      setFilteredAdvocates(advocates);
+      return;
+    }
 
     console.log("filtering advocates...");
-    const filteredAdvocates = advocates.filter((advocate) => {
+    const filtered = advocates.filter((advocate) => {
       return (
-        advocate.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        advocate.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        advocate.city.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        advocate.degree.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        advocate.specialties.some(s => s.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        advocate.yearsOfExperience.toString().includes(searchTerm)
+        advocate.firstName.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
+        advocate.lastName.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
+        advocate.city.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
+        advocate.degree.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
+        advocate.specialties.some(s => s.toLowerCase().includes(debouncedSearchTerm.toLowerCase())) ||
+        advocate.yearsOfExperience.toString().includes(debouncedSearchTerm)
       );
     });
+    setFilteredAdvocates(filtered);
+  }, [advocates, debouncedSearchTerm]);
 
-    setFilteredAdvocates(filteredAdvocates);
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
   };
 
   const handleResetClick = () => {
