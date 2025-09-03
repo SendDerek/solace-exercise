@@ -16,6 +16,32 @@ Run the development server:
 npm run dev
 ```
 
+## Testing
+
+Run all tests:
+
+```bash
+npm test
+```
+
+Run frontend tests only:
+
+```bash
+npm run test:frontend
+```
+
+Run backend tests only:
+
+```bash
+npm run test:backend
+```
+
+Run tests in watch mode:
+
+```bash
+npm run test:watch
+```
+
 ## Database set up
 
 The app is configured to return a default list of advocates. This will allow you to get the app up and running without needing to configure a database. If you’d like to configure a database, you’re encouraged to do so. You can uncomment the url in `.env` and the line in `src/app/api/advocates/route.ts` to test retrieving advocates from the database.
