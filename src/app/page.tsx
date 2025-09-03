@@ -19,13 +19,28 @@ export default function Home() {
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
-    console.log("fetching advocates...");
-    fetch("/api/advocates").then((response) => {
-      response.json().then((jsonResponse) => {
-        setAdvocates(jsonResponse.data);
-        setFilteredAdvocates(jsonResponse.data);
-      });
-    });
+    let isCancelled = false;
+    
+    const fetchAdvocates = async () => {
+      console.log("fetching advocates...");
+      try {
+        const response = await fetch("/api/advocates");
+        const jsonResponse = await response.json();
+        
+        if (!isCancelled) {
+          setAdvocates(jsonResponse.data);
+          setFilteredAdvocates(jsonResponse.data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch advocates:", error);
+      }
+    };
+    
+    fetchAdvocates();
+    
+    return () => {
+      isCancelled = true;
+    };
   }, []);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
