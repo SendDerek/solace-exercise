@@ -1,3 +1,21 @@
+@import url('https://fonts.googleapis.com/css2?family=Mollie+Glaston&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer utilities {
+  .bg-blue-25 {
+    background-color: #f8faff;
+  }
+  .font-mollie {
+    font-family: 'Mollie Glaston', cursive;
+  }
+}
+
+@layer base {
+  body {
+    @apply antialiased;
+    font-family: 'Lato', sans-serif;
+  }
+}
