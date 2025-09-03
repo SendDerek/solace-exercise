@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import SearchBar from "../components/SearchBar";
+import AdvocatesTable from "../components/AdvocatesTable";
 
 interface Advocate {
   id: string;
@@ -91,52 +93,36 @@ export default function Home() {
   };
 
   return (
-    <main style={{ margin: "24px" }}>
-      <h1>Solace Advocates</h1>
-      <br />
-      <br />
-      <div>
-        <p>Search</p>
-        <p>
-          Searching for: <span>{searchTerm}</span>
-        </p>
-        <input style={{ border: "1px solid black" }} onChange={handleSearchChange} />
-        <button onClick={handleResetClick}>Reset Search</button>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+      <div className="container mx-auto px-4 py-8 max-w-7xl">
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-bold text-gray-900 mb-4 font-mollie">
+            Solace <span className="text-blue-600">Advocates</span>
+          </h1>
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            Find the perfect advocate to support your healthcare journey. Search through our network of experienced professionals.
+          </p>
+        </div>
+        
+        <SearchBar 
+          searchTerm={searchTerm}
+          onSearchChange={handleSearchChange}
+          onReset={handleResetClick}
+        />
+        
+        <div className="mb-6">
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-semibold text-gray-900">
+              Available Advocates
+            </h2>
+            <div className="text-sm text-gray-500">
+              {filteredAdvocates.length} {filteredAdvocates.length === 1 ? 'advocate' : 'advocates'} found
+            </div>
+          </div>
+        </div>
+        
+        <AdvocatesTable advocates={filteredAdvocates} />
       </div>
-      <br />
-      <br />
-      <table>
-        <thead>
-          <tr>
-              <th>First Name</th>
-              <th>Last Name</th>
-              <th>City</th>
-              <th>Degree</th>
-              <th>Specialties</th>
-              <th>Years of Experience</th>
-              <th>Phone Number</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredAdvocates.map((advocate) => {
-            return (
-              <tr key={advocate.id}>
-                <td>{advocate.firstName}</td>
-                <td>{advocate.lastName}</td>
-                <td>{advocate.city}</td>
-                <td>{advocate.degree}</td>
-                <td>
-                  {advocate.specialties.map((s, index) => (
-                    <div key={index}>{s}</div>
-                  ))}
-                </td>
-                <td>{advocate.yearsOfExperience}</td>
-                <td>{advocate.phoneNumber}</td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-    </main>
+    </div>
   );
 }

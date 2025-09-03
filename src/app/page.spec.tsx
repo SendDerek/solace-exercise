@@ -45,15 +45,16 @@ describe('Home Page', () => {
 
   it('renders the page title', async () => {
     render(<Home />);
-    expect(screen.getByText('Solace Advocates')).toBeInTheDocument();
+    expect(screen.getByText('Solace')).toBeInTheDocument();
+    expect(screen.getByText('Advocates')).toBeInTheDocument();
   });
 
   it('fetches and displays advocates', async () => {
     render(<Home />);
 
     await waitFor(() => {
-      expect(screen.getByText('Doe')).toBeInTheDocument();
-      expect(screen.getByText('Smith')).toBeInTheDocument();
+      expect(screen.getByText('John Doe')).toBeInTheDocument();
+      expect(screen.getByText('Jane Smith')).toBeInTheDocument();
     });
   });
 
@@ -61,35 +62,35 @@ describe('Home Page', () => {
     render(<Home />);
 
     await waitFor(() => {
-      expect(screen.getByText('Doe')).toBeInTheDocument();
+      expect(screen.getByText('John Doe')).toBeInTheDocument();
     });
 
-    const searchInput = screen.getByRole('textbox');
+    const searchInput = screen.getByPlaceholderText('Search advocates by name, city, degree, or specialty...');
     fireEvent.change(searchInput, { target: { value: 'John' } });
 
     // Wait for debounce delay
     await waitFor(() => {
-      expect(screen.queryByText('Smith')).not.toBeInTheDocument();
+      expect(screen.queryByText('Jane Smith')).not.toBeInTheDocument();
     }, { timeout: 500 });
 
-    expect(screen.getByText('Doe')).toBeInTheDocument();
+    expect(screen.getByText('John Doe')).toBeInTheDocument();
   });
 
   it('resets search when reset button is clicked', async () => {
     render(<Home />);
 
     await waitFor(() => {
-      expect(screen.getByText('Doe')).toBeInTheDocument();
+      expect(screen.getByText('John Doe')).toBeInTheDocument();
     });
 
-    const searchInput = screen.getByRole('textbox');
+    const searchInput = screen.getByPlaceholderText('Search advocates by name, city, degree, or specialty...');
     fireEvent.change(searchInput, { target: { value: 'John' } });
 
-    const resetButton = screen.getByText('Reset Search');
+    const resetButton = screen.getByText('Clear');
     fireEvent.click(resetButton);
 
-    expect(screen.getByText('Doe')).toBeInTheDocument();
-    expect(screen.getByText('Smith')).toBeInTheDocument();
+    expect(screen.getByText('John Doe')).toBeInTheDocument();
+    expect(screen.getByText('Jane Smith')).toBeInTheDocument();
   });
 
   it('should debounce search input to avoid excessive filtering', async () => {
@@ -99,10 +100,10 @@ describe('Home Page', () => {
     render(<Home />);
 
     await waitFor(() => {
-      expect(screen.getByText('Doe')).toBeInTheDocument();
+      expect(screen.getByText('John Doe')).toBeInTheDocument();
     });
 
-    const searchInput = screen.getByRole('textbox');
+    const searchInput = screen.getByPlaceholderText('Search advocates by name, city, degree, or specialty...');
 
     // Type multiple characters quickly
     fireEvent.change(searchInput, { target: { value: 'J' } });
