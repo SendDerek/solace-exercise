@@ -2,9 +2,20 @@
 
 import { useEffect, useState } from "react";
 
+interface Advocate {
+  id: string;
+  firstName: string;
+  lastName: string;
+  city: string;
+  degree: string;
+  specialties: string[];
+  yearsOfExperience: number;
+  phoneNumber: string;
+}
+
 export default function Home() {
-  const [advocates, setAdvocates] = useState([]);
-  const [filteredAdvocates, setFilteredAdvocates] = useState([]);
+  const [advocates, setAdvocates] = useState<Advocate[]>([]);
+  const [filteredAdvocates, setFilteredAdvocates] = useState<Advocate[]>([]);
 
   useEffect(() => {
     console.log("fetching advocates...");
@@ -24,12 +35,12 @@ export default function Home() {
     console.log("filtering advocates...");
     const filteredAdvocates = advocates.filter((advocate) => {
       return (
-        advocate.firstName.includes(searchTerm) ||
-        advocate.lastName.includes(searchTerm) ||
-        advocate.city.includes(searchTerm) ||
-        advocate.degree.includes(searchTerm) ||
-        advocate.specialties.includes(searchTerm) ||
-        advocate.yearsOfExperience.includes(searchTerm)
+        advocate.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        advocate.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        advocate.city.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        advocate.degree.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        advocate.specialties.some(s => s.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        advocate.yearsOfExperience.toString().includes(searchTerm)
       );
     });
 
