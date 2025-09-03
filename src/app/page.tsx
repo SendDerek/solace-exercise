@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo, useCallback } from "react";
 import SearchBar from "../components/SearchBar";
 import AdvocatesTable from "../components/AdvocatesTable";
 
@@ -33,7 +33,6 @@ const useDebounce = (value: string, delay: number) => {
 
 export default function Home() {
   const [advocates, setAdvocates] = useState<Advocate[]>([]);
-  const [filteredAdvocates, setFilteredAdvocates] = useState<Advocate[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
@@ -48,7 +47,6 @@ export default function Home() {
         
         if (!isCancelled) {
           setAdvocates(jsonResponse.data);
-          setFilteredAdvocates(jsonResponse.data);
         }
       } catch (error) {
         console.error("Failed to fetch advocates:", error);
@@ -62,35 +60,31 @@ export default function Home() {
     };
   }, []);
 
-  useEffect(() => {
+  const filteredAdvocates = useMemo(() => {
     if (!debouncedSearchTerm) {
-      setFilteredAdvocates(advocates);
-      return;
+      return advocates;
     }
 
-    console.log("filtering advocates...");
-    const filtered = advocates.filter((advocate) => {
+    const searchLower = debouncedSearchTerm.toLowerCase();
+    return advocates.filter((advocate) => {
       return (
-        advocate.firstName.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
-        advocate.lastName.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
-        advocate.city.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
-        advocate.degree.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
-        advocate.specialties.some(s => s.toLowerCase().includes(debouncedSearchTerm.toLowerCase())) ||
+        advocate.firstName.toLowerCase().includes(searchLower) ||
+        advocate.lastName.toLowerCase().includes(searchLower) ||
+        advocate.city.toLowerCase().includes(searchLower) ||
+        advocate.degree.toLowerCase().includes(searchLower) ||
+        advocate.specialties.some(s => s.toLowerCase().includes(searchLower)) ||
         advocate.yearsOfExperience.toString().includes(debouncedSearchTerm)
       );
     });
-    setFilteredAdvocates(filtered);
   }, [advocates, debouncedSearchTerm]);
 
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
-  };
+  }, []);
 
-  const handleResetClick = () => {
-    console.log(advocates);
+  const handleResetClick = useCallback(() => {
     setSearchTerm("");
-    setFilteredAdvocates(advocates);
-  };
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">

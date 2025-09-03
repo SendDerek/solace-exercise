@@ -53,8 +53,8 @@ export default function AdvocatesTable({ advocates }: AdvocatesTableProps) {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-blue-50">
-            {advocates.map((advocate, index) => (
-              <tr key={advocate.id} className={index % 2 === 0 ? 'bg-white' : 'bg-blue-25'}>
+            {advocates.map((advocate, advocateIndex) => (
+              <tr key={advocate.id} className={advocateIndex % 2 === 0 ? 'bg-white' : 'bg-blue-25'}>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="text-sm font-medium text-gray-900">
                     {advocate.firstName} {advocate.lastName}
