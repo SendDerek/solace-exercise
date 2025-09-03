@@ -15,6 +15,14 @@ interface AdvocatesTableProps {
   advocates: Advocate[];
 }
 
+function formatPhoneNumber(phone: string | number): string {
+  const phoneStr = phone.toString().replace(/\D/g, '');
+  if (phoneStr.length === 10) {
+    return `(${phoneStr.slice(0, 3)}) ${phoneStr.slice(3, 6)}-${phoneStr.slice(6)}`;
+  }
+  return phoneStr;
+}
+
 export default function AdvocatesTable({ advocates }: AdvocatesTableProps) {
   if (advocates.length === 0) {
     return (
@@ -82,7 +90,7 @@ export default function AdvocatesTable({ advocates }: AdvocatesTableProps) {
                     href={`tel:${advocate.phoneNumber}`}
                     className="text-blue-600 hover:text-blue-800 text-sm font-medium"
                   >
-                    {advocate.phoneNumber}
+                    {formatPhoneNumber(advocate.phoneNumber)}
                   </a>
                 </td>
               </tr>
